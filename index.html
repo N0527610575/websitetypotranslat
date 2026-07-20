@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartExt - התוסף שישדרג לך את הדפדפן</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #070b14;
+            --primary-blue: #1e40af;
+            --accent-cyan: #0ea5e9;
+            --glow-color: rgba(14, 165, 233, 0.4);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Heebo', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* תאורת רקע (Glow Orbs) */
+        .ambient-light {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(140px);
+            z-index: -1;
+            opacity: 0.45;
+            animation: floatLight 12s ease-in-out infinite alternate;
+        }
+
+        .light-1 {
+            top: -10%;
+            right: 15%;
+            background: radial-gradient(circle, var(--primary-blue) 0%, transparent 70%);
+        }
+
+        .light-2 {
+            bottom: 10%;
+            left: 10%;
+            background: radial-gradient(circle, var(--accent-cyan) 0%, transparent 70%);
+            width: 500px;
+            height: 500px;
+            animation-duration: 16s;
+        }
+
+        @keyframes floatLight {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-40px, 50px) scale(1.1); }
+        }
+
+        /* עיצוב זכוכית חלבית כללי */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+        }
+
+        /* ניווט (Navbar) */
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1200px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 1000;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px var(--glow-color);
+            transform: translateY(-2px);
+        }
+
+        /* אזור ראשי (Hero Section) */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 140px 20px 80px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--accent-cyan);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+
+        h1 span {
+            background: linear-gradient(135deg, #38bdf8 0%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            color: var(--text-muted);
+            max-width: 680px;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 70px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, #1d4ed8 100%);
+            color: white;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        /* תצוגת דמו / תמונה של התוסף */
+        .hero-mockup-wrapper {
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+        }
+
+        .mockup-window {
+            width: 100%;
+            height: 480px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .window-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .address-bar {
+            margin-right: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            height: 28px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mockup-content {
+            flex-grow: 1;
+            border-radius: 16px;
+            background: radial-gradient(circle at center, rgba(14, 165, 233, 0.1) 0%, rgba(7, 11, 20, 0.8) 100%);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* אלמנט עיצובי שמדמה את פעולת התוסף */
+        .extension-widget-demo {
+            width: 320px;
+            padding: 25px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(14, 165, 233, 0.2);
+            text-align: right;
+            transform: translateY(0);
+            animation: floatingWidget 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatingWidget {
+            0% { transform: translateY(-5px); }
+            100% { transform: translateY(8px); }
+        }
+
+        .widget-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .widget-badge {
+            background: var(--primary-blue);
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .widget-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .widget-bar {
+            height: 6px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .widget-bar-fill {
+            height: 100%;
+            width: 75%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-cyan));
+        }
+
+        /* רשת פיצ'רים (Features Grid) */
+        .features {
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .section-desc {
+            text-align: center;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 60px;
+            font-size: 1.1rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            padding: 40px 30px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(14, 165, 233, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            color: var(--accent-cyan);
+            font-size: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .feature-text {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* אזור שלבים / איך זה עובד */
+        .steps-section {
+            padding: 80px 20px 120px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .step-row {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-top: 60px;
+            padding: 40px;
+        }
+
+        .step-number {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(14,165,233,0.4) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .step-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .step-content p {
+            color: var(--text-muted);
+        }
+
+        /* פוטר */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* התאמה למובייל */
+        @media (max-width: 768px) {
+            nav { width: 95%; padding: 0 20px; }
+            .step-row { flex-direction: column; text-align: center; gap: 20px; }
+            .mockup-window { height: 380px; }
+            .extension-widget-demo { width: 90%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- תאורת אווירה ברקע -->
+    <div class="ambient-light light-1"></div>
+    <div class="ambient-light light-2"></div>
+
+    <!-- תפריט ניווט עליון -->
+    <nav class="glass-panel">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-cyan);"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            SmartExt
+        </div>
+        <div>
+            <a href="#install" class="nav-btn">הורדה חינם לכרום</a>
+        </div>
+    </nav>
+
+    <!-- אזור פתיחה (Hero) -->
+    <section class="hero">
+        <div class="badge">✨ גרסה 2.0 זמינה כעת בחנות הכרום</div>
+        <h1>התוסף שמשנה את הדרך שבה אתה <span>חושב וגולש</span></h1>
+        <p class="subtitle">חווית משתמש מינימליסטית, מהירה ומדויקת. שילוב עוצמתי של כלים חכמים ישירות בתוך הדפדפן שלך, בעיצוב נקי ומוקפד שאינו מפריע לעין.</p>
+        
+        <div class="cta-group">
+            <a href="#install" class="btn-primary" id="install">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>
+                הוספה לכרום — חינם
+            </a>
+            <a href="#features" class="btn-secondary">איך זה עובד?</a>
+        </div>
+
+        <!-- תצוגת דמו של התוסף (מוקאפ זכוכית) -->
+        <div class="hero-mockup-wrapper">
+            <div class="mockup-window glass-panel">
+                <div class="window-header">
+                    <div class="dot dot-red"></div>
+                    <div class="dot dot-yellow"></div>
+                    <div class="dot dot-green"></div>
+                    <div class="address-bar">https://example.com/workflow-supercharged</div>
+                </div>
+                <div class="mockup-content">
+                    <!-- הדמיה של חלון התוסף צף מעל אתר -->
+                    <div class="extension-widget-demo">
+                        <div class="widget-title">
+                            <span>זיהוי טקסט וניתוח מהיר</span>
+                            <span class="widget-badge">פעיל</span>
+                        </div>
+                        <div class="widget-text">התוסף סורק, ממקד ומשפר את האלמנטים הנבחרים במסך בזמן אמת, עם אפס מאמץ מצידך.</div>
+                        <div class="widget-bar">
+                            <div class="widget-bar-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- אזור הפיצ'רים -->
+    <section class="features" id="features">
+        <h2 class="section-title">מעוצב לשלמות, נבנה לביצועים</h2>
+        <p class="section-desc">כל מה שצריך כדי לשדרג את שגרת העבודה שלכם בדפדפן, מרוכז בממשק מודרני אחד.</p>
+
+        <div class="grid-3">
+            <!-- כרטיס 1 -->
+            <div class="feature-card glass-panel">
+                <div class="icon-box">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                </div>
+                <h3 class="feature-title">מהירות שיא ומשקל אפסי</h3>
+                <p class="feature-text">התוסף נבנה בארכיטקטורה קלה במיוחד (Under 1MB) שאינה מעמיסה על הזיכרון של הדפדפן ושומרת על ביצועים חלקים.</p>
+            </div>
+
+            <!-- כרטיס 2 -->
+            <div class="feature-card glass-panel">
+                <div class="icon-box">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                </div>
+                <h3 class="feature-title">ממשק זכוכית מרהיב</h3>
+                <p class="feature-text">חווית שימוש נעימה לעין המשתמשת באפקט Frosted Glass שמשתלב בטבעיות מעל כל אתר אינטרנט שבו תגלשו.</p>
+            </div>
+
+            <!-- כרטיס 3 -->
+            <div class="feature-card glass-panel">
+                <div class="icon-box">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <h3 class="feature-title">פרטיות כערך עליון</h3>
+                <p class="feature-text">המידע שלך נשאר שלך. כל העיבוד מתבצע מקומית אצלך בדפדפן, ללא שליחת נתונים לשרתים חיצוניים וללא מעקב.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- איך זה עובד (צעדים) -->
+    <section class="steps-section">
+        <h2 class="section-title">שלושה צעדים לפתיחת החוויה</h2>
+        <p class="section-desc">מתקינים פעם אחת ונהנים משדרוג תמידי לכל אתר שבו תבקרו.</p>
+
+        <div class="step-row glass-panel">
+            <div class="step-number">01</div>
+            <div class="step-content">
+                <h3>התקנה מהירה בלחיצה</h3>
+                <p>למידה מהירה ללא הגדרות מסובכות. לוחצים על כפתור ההוספה לכרום והתוסף מוכן לעבודה תוך שניות.</p>
+            </div>
+        </div>
+
+        <div class="step-row glass-panel">
+            <div class="step-number">02</div>
+            <div class="step-content">
+                <h3>התאמה אישית של הממשק</h3>
+                <p>בוחרים את קיצורי המקשים המועדפים עליכם ואת ערכת הנושא, וממקמים את חלון הזכוכית איפה שנוח לכם במסך.</p>
+            </div>
+        </div>
+
+        <div class="step-row glass-panel">
+            <div class="step-number">03</div>
+            <div class="step-content">
+                <h3>גלישה ברמה אחרת</h3>
+                <p>נהנים מגישה מיידית לכל התכונות והכלים ישירות מכל עמוד אינטרנט, ומעלים את הפרודוקטיביות לשיא חדש.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- פוטר -->
+    <footer>
+        <p>© 2026 SmartExt. כל הזכויות שמורות. מעוצב באהבה וחשיבה על כל פרט.</p>
+    </footer>
+
+    <script>
+        // אנימציית גלילה חלקה לקישורים
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
